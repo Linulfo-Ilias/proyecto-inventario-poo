@@ -8,7 +8,7 @@ package modelo;
  *
  * @author LINUL
  */
-public class Producto{
+public class Producto implements Cloneable{
     private int codigo;
     private String nombre;
     private int cantidad;
@@ -20,7 +20,15 @@ public class Producto{
         this.cantidad = cantidad;
         this.precio = precio;
     }
-
+    
+    @Override
+    public Producto clone() {
+        try {
+            return (Producto) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
+    }
 
     @Override
     public String toString() {
