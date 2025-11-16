@@ -35,8 +35,13 @@ public class Producto implements Cloneable{
         return "Producto{" + "codigo=" + codigo + ", nombre=" + nombre + ", cantidad=" + cantidad + ", precio=" + precio + '}';
     }
     
+    public void sumar(int cantidad){
+        this.cantidad += cantidad;
+    }
     
-    
+    public void restar(int cantidad){
+        this.cantidad -= cantidad;
+    }
 
     /**
      * @return the codigo
