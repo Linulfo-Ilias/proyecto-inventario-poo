@@ -24,14 +24,10 @@ public class Deuda extends Transaccion{
         this.pagado = false;
         setTipo("deuda");
     }
-    
-    private String mostrarPagado(){
-        return pagado ? "si": "no";
-    }
 
     @Override
     public String toString() {
-        return "Transaccion{" + "codigo=" + getCodigo() + ", fecha=" + imprimirFecha() + ", monto=" + getMonto() + ", tipo=" + getTipo() + ", Cliente=" + cliente.getNombre() + ", producto=" + producto.getNombre() + ", cantidad=" + cantidad + ", pagado="+ mostrarPagado() + '}';
+        return "Transaccion{" + "codigo=" + getCodigo() + ", fecha=" + imprimirFecha() + ", monto=" + getMonto() + ", tipo=" + getTipo() + ", Cliente=" + cliente.getNombre() + ", producto=" + producto.getNombre() + ", cantidad=" + cantidad + ", pagado="+ (pagado ? "si" : "no") + '}';
     }
     
     public void marcarComoPagado(){
