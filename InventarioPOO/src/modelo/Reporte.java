@@ -52,7 +52,7 @@ public class Reporte {
         int contador = 0;
         for (Map.Entry<String, Integer> entry : lista) {
             if (contador >= 4){ break;}
-            masVendidos += ("   "+entry.getKey() + ": " + entry.getValue()+"\n");
+            masVendidos += ("    "+entry.getKey() + ": " + entry.getValue()+"\n");
             contador++;
         }
         
@@ -67,7 +67,61 @@ public class Reporte {
         
         dao.guardarReporte("reporte_ventas.txt", reporte);
     }
-    public void generarReporteClientes(List<Cliente> clientes){
-    
+    public void generarReporteClientes(List<Cliente> clientes, List<Transaccion> transacciones){
+        String listaClientes = "";
+        String clientesConDeudas = "";
+        String compradoresEsteMes = "";
+        String rankingClientes = "";
+        
+        LocalDate hoy = LocalDate.now();
+        
+        for (Cliente cliente : clientes) {
+            listaClientes += "    "+cliente.getNombre()+", codigo: "+cliente.getCodigo()+"\n";
+            
+        }
+        
+        ArrayList<Cliente> listaCompradoresEsteMes = new ArrayList<>();
+        HashMap<String, Double> compradores = new HashMap<>();
+        HashMap<Cliente, Boolean> deudores = new HashMap<>();
+        
+        for (Transaccion transaccion : transacciones) {
+            if (transaccion instanceof Deuda){
+                Deuda deuda = (Deuda) transaccion;
+                deudores.put(deuda.getCliente(), true);
+            }
+            
+            if (transaccion instanceof Venta){
+                Venta venta = (Venta) transaccion;
+                if (venta.getFecha().getMonth() == hoy.getMonth() && venta.getFecha().getYear() == hoy.getYear() && !listaCompradoresEsteMes.contains(venta.getCliente())){
+                    listaCompradoresEsteMes.add(venta.getCliente());
+                    compradoresEsteMes += "    "+venta.getCliente().getNombre();
+                }
+                
+                String nombre = venta.getCliente().getNombre();
+                compradores.putIfAbsent(nombre, 0.0);
+                compradores.put(nombre, compradores.get(nombre) + venta.getMonto());
+            }
+        }
+        
+        for (Cliente cliente : deudores.keySet()) {
+            clientesConDeudas += "    " + cliente.getNombre() + "\n";
+        }
+        
+        List<Map.Entry<String, Double>> lista = new ArrayList<>(compradores.entrySet());
+        lista.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+        
+        int i = 1;
+        for (Map.Entry<String, Double> entry : lista) {
+            rankingClientes += "  " + i + ". " + entry.getKey() + ": $" + entry.getValue() + "\n";
+            i++;
+        }
+        
+        String reporte = "=== REPORTE DE CLIENTES ===\n\n"
+               + "Lista de clientes: \n"+listaClientes+"\n"
+               + "Clientes con deudas: \n"+clientesConDeudas+"\n"
+               + "Clientes que compraron este mes: \n"+compradoresEsteMes+"\n"
+               + "Total gastado por cliente: \n"+rankingClientes+"\n";
+        
+        dao.guardarReporte("reporte_clientes.txt", reporte);
     }
 }
