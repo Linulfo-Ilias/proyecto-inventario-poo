@@ -34,7 +34,6 @@ public class Inventario {
         for (Categoria categoria : categorias) {
             if(c==categoria){
                 categoria.getProductos().add(p);
-                System.out.println("Producto registrado...");
             }
         }
     }
@@ -42,77 +41,80 @@ public class Inventario {
     public void eliminarProducto(int codigo){
         for (Categoria categoria : categorias) {
             List<Producto> productos= categoria.getProductos();
-            for (int i = 0; i < productos.size(); i++) {
+            for (int i = productos.size()-1; i >= 0; i--) {
                 if(productos.get(i).getCodigo()==codigo){
                     productos.remove(i);
-                    System.out.println("Producto eliminado...");
                     return;
                 }
             }
         }
-        System.out.println("No se encontro un producto con ese codigo...");
     }
     
-    public Producto buscarPorCodigo(int codigo) {
+    public Producto buscarProductoPorCodigo(int codigo) {
         for (Categoria categoria : categorias) {
              for (Producto p : categoria.getProductos()) {
                  if (p.getCodigo() == codigo) {
-                     return p;  // Lo encontró
+                     return p;
                  }
              }
         }
         return null;
     }
     
-    public Producto buscarPorNombre(String nombre){
+    public List<Producto> buscarProductoPorNombre(String nombre){
+        List<Producto> lista = new ArrayList<>();
         for (Categoria categoria : categorias) {
             for (Producto p : categoria.getProductos()) {
                 if(p.getNombre().equals(nombre)){
-                    return p;
+                    lista.add(p);
                 }
             }
         }
-        return null;
+        return lista;
     }
     
-    public void listarProductos() {
+    public String listarProductos() {
+        String lista = "";
         for (Categoria categoria : categorias) {
-            System.out.println("Categoría: " + categoria.getNombre());
+            lista += categoria.toString()+"\n";
             for (Producto p : categoria.getProductos()) {
-                System.out.println("  - " + p);
+                lista += "\t"+p.toString()+"\n";
             }
-            System.out.println();
         }
+        return lista;
     }
     
-    public void listarPorCategoria(String namecategoria){
+    public String listarProductosPorCategoria(String nombreCategoria){
+        String lista = "";
         for (Categoria categoria : categorias) {
-            if(categoria.getNombre().equals(namecategoria)){
-                System.out.println("Categoria: "+namecategoria);
+            if(categoria.getNombre().equals(nombreCategoria)){
+                lista += categoria.toString()+"\n";
                 for (Producto p : categoria.getProductos()){
-                    System.out.println(" - "+p);
+                    lista += "\t"+p.toString()+"\n";
                 }
-                return;
+                return lista;
             }
             
         }
-        System.out.println("No existe la categoria: "+namecategoria);
+        return "no se encontro la categoria";
     }
     
-    public void listarBajaCantidad(int cantidad){
-        System.out.println("Productos con cantidad menor o igual a "+cantidad+": ");
+    public String listarBajaCantidad(int cantidad){
+        String lista = "";
         for (Categoria categoria : categorias) {
             for (Producto p : categoria.getProductos()) {
                 if(p.getCantidad()<=cantidad){
-                    System.out.println("Categoria: "+categoria.getNombre()+" | Producto: "+p.getNombre()+" | Cantidad: "+p.getCantidad());
+                    lista += p.toString()+"\n";
                 }
             }
         }
+        return lista;
     }
     
-    public void mostrarMasCaroYMasBarato() {
+    public String mostrarMasCaroYMasBarato() {
         Producto masCaro = null;
         Producto masBarato = null;
+        String lista = "";
         for (Categoria categoria : categorias) {
             for (Producto p : categoria.getProductos()) {
                 if (masCaro == null || p.getPrecio() > masCaro.getPrecio()) {
@@ -123,12 +125,15 @@ public class Inventario {
                 }
             }
         }
-        if (masCaro != null) {
-            System.out.println("Producto más caro: "+masCaro.getNombre()+" | Precio: "+masCaro.getPrecio());
+        if (masCaro == null){
+            lista = "No hay productos";
+        } else {
+            lista += "Mas caro:\n"+
+                    masCaro.toString()+
+                    "\nMas Barato:\n"+
+                    masBarato.toString();
         }
-        if (masBarato != null) {
-            System.out.println("Producto más barato: "+masBarato.getNombre()+" | Precio: "+masBarato.getPrecio());
-        }
+        return lista;
     }
     
     public void clonarProducto(int codigo) {
@@ -138,18 +143,15 @@ public class Inventario {
                     Producto copia = p.clone();
                     if (copia != null) {
                         categoria.getProductos().add(copia);
-                        System.out.println("Producto clonado...");
-                    } else {
-                        System.out.println("No se pudo clonar el producto...");
-                    }
+                    } 
                     return;
                 }
             }
         }
-        System.out.println("No se encontro un producto con ese codigo...");
+
     }
     
-    public float calcValorTotalInventario(){
+    public float calcularValorTotalInventario(){
         float total=0;
         for (Categoria categoria : categorias) {
             for(Producto p : categoria.getProductos()){
