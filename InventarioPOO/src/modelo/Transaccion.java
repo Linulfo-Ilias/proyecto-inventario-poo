@@ -5,7 +5,7 @@
 package modelo;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  *
@@ -13,25 +13,25 @@ import java.util.Date;
  */
 public abstract class Transaccion {
     private int codigo;
-    private Date fecha;
+    private LocalDate fecha;
     private float monto;
     private String tipo;
 
-    public Transaccion(int codigo, Date fecha, float monto) {
+    public Transaccion(int codigo, LocalDate fecha, float monto) {
         this.codigo = codigo;
         this.fecha = fecha;
         this.monto = monto;
     }
 
-    public String imprimirFecha(Date fecha){
+    public String imprimirFecha(){
         SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-        return formato.format(fecha);
+        return formato.format(this.getFecha());
     }
             
             
     @Override
     public String toString() {
-        return "Transaccion{" + "codigo=" + codigo + ", fecha=" + imprimirFecha(fecha) + ", monto=" + monto + ", tipo=" + tipo + '}';
+        return "Transaccion{" + "codigo=" + codigo + ", fecha=" + imprimirFecha() + ", monto=" + monto + ", tipo=" + tipo + '}';
     }
 
     /**
@@ -51,14 +51,14 @@ public abstract class Transaccion {
     /**
      * @return the fecha
      */
-    public Date getFecha() {
+    public LocalDate getFecha() {
         return fecha;
     }
 
     /**
      * @param fecha the fecha to set
      */
-    public void setFecha(Date fecha) {
+    public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
     }
 

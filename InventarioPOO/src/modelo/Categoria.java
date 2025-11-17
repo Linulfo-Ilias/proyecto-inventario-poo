@@ -18,7 +18,6 @@ public class Categoria {
     private String nombre;
     private List<Producto> productos;
 
-    // CONSTRUCTOR VACÍO (IMPORTANTE)
     public Categoria() {
         this.productos = new ArrayList<>();
     }
