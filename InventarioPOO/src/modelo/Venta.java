@@ -26,7 +26,7 @@ public class Venta extends Transaccion{
 
     @Override
     public String toString() {
-        return "Transaccion{" + "codigo=" + getCodigo() + ", fecha=" + getFecha() + ", monto=" + getMonto() + ", tipo=" + getTipo() + ", Cliente=" + cliente.getNombre() + ", producto=" + producto.getNombre() + ", cantidad=" + cantidad + '}';
+        return "Transaccion{" + "codigo=" + getCodigo() + ", fecha=" + imprimirFecha(getFecha()) + ", monto=" + getMonto() + ", tipo=" + getTipo() + ", Cliente=" + cliente.getNombre() + ", producto=" + producto.getNombre() + ", cantidad=" + cantidad + '}';
     }
     
     

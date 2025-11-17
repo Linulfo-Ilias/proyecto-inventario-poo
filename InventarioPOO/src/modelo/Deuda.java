@@ -31,7 +31,7 @@ public class Deuda extends Transaccion{
 
     @Override
     public String toString() {
-        return "Transaccion{" + "codigo=" + getCodigo() + ", fecha=" + getFecha() + ", monto=" + getMonto() + ", tipo=" + getTipo() + ", Cliente=" + cliente.getNombre() + ", producto=" + producto.getNombre() + ", cantidad=" + cantidad + ", pagado"+ mostrarPagado() + '}';
+        return "Transaccion{" + "codigo=" + getCodigo() + ", fecha=" + imprimirFecha(getFecha()) + ", monto=" + getMonto() + ", tipo=" + getTipo() + ", Cliente=" + cliente.getNombre() + ", producto=" + producto.getNombre() + ", cantidad=" + cantidad + ", pagado"+ mostrarPagado() + '}';
     }
     
     public void marcarComoPagado(){

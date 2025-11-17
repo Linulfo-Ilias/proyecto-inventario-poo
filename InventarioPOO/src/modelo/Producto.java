@@ -42,6 +42,7 @@ public class Producto implements Cloneable{
     public void restar(int cantidad){
         this.cantidad -= cantidad;
     }
+    
 
     /**
      * @return the codigo
