@@ -4,7 +4,7 @@
  */
 package modelo;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  *
@@ -16,12 +16,12 @@ public class Deuda extends Transaccion{
     private int cantidad;
     private boolean pagado;
 
-    public Deuda(Cliente cliente, Producto producto, int cantidad, boolean pagado, int codigo, Date fecha, float monto) {
+    public Deuda(Cliente cliente, Producto producto, int cantidad, int codigo, LocalDate fecha, float monto) {
         super(codigo, fecha, monto);
         this.cliente = cliente;
         this.producto = producto;
         this.cantidad = cantidad;
-        this.pagado = pagado;
+        this.pagado = false;
         setTipo("deuda");
     }
     
@@ -31,7 +31,7 @@ public class Deuda extends Transaccion{
 
     @Override
     public String toString() {
-        return "Transaccion{" + "codigo=" + getCodigo() + ", fecha=" + imprimirFecha(getFecha()) + ", monto=" + getMonto() + ", tipo=" + getTipo() + ", Cliente=" + cliente.getNombre() + ", producto=" + producto.getNombre() + ", cantidad=" + cantidad + ", pagado"+ mostrarPagado() + '}';
+        return "Transaccion{" + "codigo=" + getCodigo() + ", fecha=" + imprimirFecha() + ", monto=" + getMonto() + ", tipo=" + getTipo() + ", Cliente=" + cliente.getNombre() + ", producto=" + producto.getNombre() + ", cantidad=" + cantidad + ", pagado="+ mostrarPagado() + '}';
     }
     
     public void marcarComoPagado(){

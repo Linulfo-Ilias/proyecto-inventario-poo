@@ -21,6 +21,10 @@ public class Inventario {
     private List<Cliente> clientes;
     private List<Proveedor> proveedores;
     private List<Transaccion> transacciones;
+    private int contadorCodigosCliente;
+    private int contadorCodigosTransaccion;
+    private int contadorCodigosProveedor;
+    private int contadorCodigosProducto;
 
     public Inventario() {
         categorias=new ArrayList<>();
@@ -29,11 +33,27 @@ public class Inventario {
         transacciones=new ArrayList<>();
     }
 
+    public int generarCodigoCliente(){
+        return contadorCodigosCliente++;
+    }
     
-    public void registrarProducto(Categoria c, Producto p){
+    public int generarCodigoTransaccion(){
+        return contadorCodigosTransaccion++;
+    }
+    
+    public int generarCodigoProveedor(){
+        return contadorCodigosProveedor++;
+    }
+    
+    public int generarCodigoProducto(){
+        return contadorCodigosProducto++;
+    }
+    
+    public void registrarProducto(String nombreCategoria, String nombre, int cantidad, float precio){
         for (Categoria categoria : categorias) {
-            if(c==categoria){
-                categoria.getProductos().add(p);
+            if(categoria.getNombre().equalsIgnoreCase(nombreCategoria)){
+                Producto producto = new Producto(generarCodigoProducto(), nombre, cantidad, precio);
+                categoria.getProductos().add(producto);
             }
         }
     }
@@ -65,7 +85,7 @@ public class Inventario {
         List<Producto> lista = new ArrayList<>();
         for (Categoria categoria : categorias) {
             for (Producto p : categoria.getProductos()) {
-                if(p.getNombre().equals(nombre)){
+                if(p.getNombre().equalsIgnoreCase(nombre)){
                     lista.add(p);
                 }
             }
@@ -87,7 +107,7 @@ public class Inventario {
     public String listarProductosPorCategoria(String nombreCategoria){
         String lista = "";
         for (Categoria categoria : categorias) {
-            if(categoria.getNombre().equals(nombreCategoria)){
+            if(categoria.getNombre().equalsIgnoreCase(nombreCategoria)){
                 lista += categoria.toString()+"\n";
                 for (Producto p : categoria.getProductos()){
                     lista += "\t"+p.toString()+"\n";
@@ -168,6 +188,7 @@ public class Inventario {
                 if(p.getCodigo()==codigo){
                     if(p.getCantidad()>=cantidad){
                         p.restar(cantidad);
+                        return;
                     }
                 }
             }
@@ -179,19 +200,21 @@ public class Inventario {
             for(Producto p : categoria.getProductos()){
                 if(p.getCodigo()==codigo){
                     p.sumar(cantidad);
+                    return;
                 }
             }
         }
     }  
     
  
-    public void registrarCategoria(Categoria c){
-        categorias.add(c);
+    public void registrarCategoria(String nombre){
+        Categoria categoria = new Categoria(nombre);
+        categorias.add(categoria);
     }
     
     public void editarNombreCategoria(String nombreAntes, String nombreDespues){
         for (Categoria categoria : categorias) {
-            if (categoria.getNombre().equals(nombreAntes)){
+            if (categoria.getNombre().equalsIgnoreCase(nombreAntes)){
                 categoria.setNombre(nombreDespues);
                 return;
             }
@@ -214,7 +237,8 @@ public class Inventario {
         return lista;
     }
     
-    public void registrarProveedor(Proveedor proveedor){
+    public void registrarProveedor(String nombre){
+        Proveedor proveedor = new Proveedor(generarCodigoProveedor(), nombre);
         proveedores.add(proveedor);
     }
     
@@ -235,11 +259,12 @@ public class Inventario {
         return lista;
     }
 
-    public void registrarCliente(Cliente cliente){
+    public void registrarCliente(String nombre){
+        Cliente cliente = new Cliente(generarCodigoCliente(), nombre);
         clientes.add(cliente);
     }
     
-    public void EliminarCliente(int codigo){
+    public void eliminarCliente(int codigo){
         for (int i = clientes.size() - 1; i >= 0; i--) {
             if (clientes.get(i).getCodigo() == codigo){
                 clientes.remove(i);
@@ -251,7 +276,7 @@ public class Inventario {
     public List<Cliente> buscarClientePorNombre(String nombre){
         List<Cliente> lista = new ArrayList<>();
         for (Cliente cliente : clientes) {
-            if (cliente.getNombre().equals(nombre)){
+            if (cliente.getNombre().equalsIgnoreCase(nombre)){
                 lista.add(cliente);
             }
         }
@@ -279,7 +304,7 @@ public class Inventario {
         String listaString = "";
         List<Cliente> listaList = new ArrayList<>();
         for (Transaccion transaccion : transacciones) {
-            if (transaccion.getTipo().equals("deuda")){
+            if (transaccion.getTipo().equalsIgnoreCase("deuda")){
                 Deuda deuda = (Deuda) transaccion;
                 if (!deuda.isPagado()){
                     if (!listaList.contains(deuda.getCliente())){
@@ -297,12 +322,12 @@ public class Inventario {
     public String listarTransaccionesCliente(int codigo){
         String lista = "";
         for (Transaccion transaccion : transacciones) {
-            if (transaccion.getTipo().equals("deuda")){
+            if (transaccion.getTipo().equalsIgnoreCase("deuda")){
                 Deuda deuda = (Deuda) transaccion;
                 if (deuda.getCliente().getCodigo() == codigo){
                     lista += deuda.toString()+"\n";
                 }
-            }else if(transaccion.getTipo().equals("venta")){
+            }else if(transaccion.getTipo().equalsIgnoreCase("venta")){
                 Venta venta = (Venta) transaccion;
                 if (venta.getCliente().getCodigo() == codigo){
                     lista += venta.toString()+"\n";
@@ -316,14 +341,85 @@ public class Inventario {
         transacciones.add(transaccion);
     }
     
+    public void registrarDeuda(int codigoCliente, int codigoProducto, int cantidad){
+        Cliente clienteARegistrar = null;
+        Producto productoARegistrar = null;
+        for (Cliente cliente : clientes) {
+            if (cliente.getCodigo() == codigoCliente){
+                clienteARegistrar = cliente;
+                break;
+            }
+        }
+        for (Categoria categoria : categorias) {
+            for (Producto producto : categoria.getProductos()){
+                if (producto.getCodigo() == codigoProducto){
+                    productoARegistrar = producto;
+                    break;
+                }
+            }
+            if (productoARegistrar != null) break;
+        }
+        Deuda deuda = new Deuda(clienteARegistrar,
+                productoARegistrar, 
+                cantidad, 
+                (generarCodigoTransaccion()), 
+                LocalDate.now(), 
+                (cantidad*productoARegistrar.getPrecio()));
+        
+        transacciones.add(deuda);
+    }
+    
+    public void registrarVenta(int codigoCliente, int codigoProducto, int cantidad){
+        Cliente clienteARegistrar = null;
+        Producto productoARegistrar = null;
+        for (Cliente cliente : clientes) {
+            if (cliente.getCodigo() == codigoCliente){
+                clienteARegistrar = cliente;
+                break;
+            }
+        }
+        for (Categoria categoria : categorias) {
+            for (Producto producto : categoria.getProductos()){
+                if (producto.getCodigo() == codigoProducto){
+                    productoARegistrar = producto;
+                    break;
+                }
+            }
+            if (productoARegistrar != null) break;
+        }
+        Venta venta = new Venta(
+                productoARegistrar,
+                clienteARegistrar, 
+                cantidad, 
+                (generarCodigoTransaccion()), 
+                LocalDate.now(), 
+                (cantidad*productoARegistrar.getPrecio()));
+        
+        transacciones.add(venta);
+    }
+    
+    public void registrarPago(int codigoProveedor, float monto){
+        Proveedor proveedorARegistrar = null;
+        for (Proveedor proveedor : proveedores) {
+            if (proveedor.getCodigo() == codigoProveedor){
+                proveedorARegistrar = proveedor;
+                break;
+            }  
+        }
+        Pago pago = new Pago(proveedorARegistrar,
+                (generarCodigoTransaccion()),
+                LocalDate.now(), 
+                monto);
+        
+        transacciones.add(pago);
+    }
+    
     public List<Transaccion> buscarTransaccionesPorFecha(int dia, int mes, int anio) {
         List<Transaccion> resultado = new ArrayList<>();
         LocalDate fechaBuscada = LocalDate.of(anio, mes, dia);
 
         for (Transaccion transaccion : transacciones) {
-            LocalDate fechaTransaccion = transaccion.getFecha().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
-            if (fechaTransaccion.equals(fechaBuscada)) {
+            if (transaccion.getFecha().equals(fechaBuscada)) {
                 resultado.add(transaccion);
             }
         }
@@ -334,7 +430,7 @@ public class Inventario {
     public List<Transaccion> buscarTransaccionesPorTipo(String tipo){
         List<Transaccion> resultado = new ArrayList<>();
         for (Transaccion transaccion : transacciones) {
-            if (transaccion.getTipo().equals(tipo)){
+            if (transaccion.getTipo().equalsIgnoreCase(tipo)){
                 resultado.add(transaccion);
             }
         }
@@ -352,7 +448,7 @@ public class Inventario {
     public float calcularIngresos(){
         float ingresos = 0;
         for (Transaccion transaccion : transacciones) {
-            if (transaccion.getTipo().equals("deuda") || transaccion.getTipo().equals("venta")){
+            if (transaccion.getTipo().equalsIgnoreCase("deuda") || transaccion.getTipo().equalsIgnoreCase("venta")){
                 ingresos += transaccion.getMonto();
             }
         }
@@ -362,7 +458,7 @@ public class Inventario {
     public float calcularEgresos(){
         float egresos = 0;
         for (Transaccion transaccion : transacciones) {
-            if (transaccion.getTipo().equals("pago")){
+            if (transaccion.getTipo().equalsIgnoreCase("pago")){
                 egresos += transaccion.getMonto();
             }
         }
@@ -435,6 +531,62 @@ public class Inventario {
      */
     public void setTransacciones(List<Transaccion> transacciones) {
         this.transacciones = transacciones;
+    }
+
+    /**
+     * @return the contadorCodigosCliente
+     */
+    public int getContadorCodigosCliente() {
+        return contadorCodigosCliente;
+    }
+
+    /**
+     * @param contadorCodigosCliente the contadorCodigosCliente to set
+     */
+    public void setContadorCodigosCliente(int contadorCodigosCliente) {
+        this.contadorCodigosCliente = contadorCodigosCliente;
+    }
+
+    /**
+     * @return the contadorCodigosTransaccion
+     */
+    public int getContadorCodigosTransaccion() {
+        return contadorCodigosTransaccion;
+    }
+
+    /**
+     * @param contadorCodigosTransaccion the contadorCodigosTransaccion to set
+     */
+    public void setContadorCodigosTransaccion(int contadorCodigosTransaccion) {
+        this.contadorCodigosTransaccion = contadorCodigosTransaccion;
+    }
+
+    /**
+     * @return the contadorCodigosProveedor
+     */
+    public int getContadorCodigosProveedor() {
+        return contadorCodigosProveedor;
+    }
+
+    /**
+     * @param contadorCodigosProveedor the contadorCodigosProveedor to set
+     */
+    public void setContadorCodigosProveedor(int contadorCodigosProveedor) {
+        this.contadorCodigosProveedor = contadorCodigosProveedor;
+    }
+
+    /**
+     * @return the contadorCodigosProducto
+     */
+    public int getContadorCodigosProducto() {
+        return contadorCodigosProducto;
+    }
+
+    /**
+     * @param contadorCodigosProducto the contadorCodigosProducto to set
+     */
+    public void setContadorCodigosProducto(int contadorCodigosProducto) {
+        this.contadorCodigosProducto = contadorCodigosProducto;
     }
     
     

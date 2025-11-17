@@ -4,8 +4,7 @@
  */
 package modelo;
 
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
 
 /**
  *
@@ -16,7 +15,7 @@ public class Venta extends Transaccion{
     private Cliente cliente;
     private int cantidad;
 
-    public Venta(Producto producto, Cliente cliente, int cantidad, int codigo, Date fecha, float monto) {
+    public Venta(Producto producto, Cliente cliente, int cantidad, int codigo, LocalDate fecha, float monto) {
         super(codigo, fecha, monto);
         this.producto = producto;
         this.cliente = cliente;
@@ -26,7 +25,7 @@ public class Venta extends Transaccion{
 
     @Override
     public String toString() {
-        return "Transaccion{" + "codigo=" + getCodigo() + ", fecha=" + imprimirFecha(getFecha()) + ", monto=" + getMonto() + ", tipo=" + getTipo() + ", Cliente=" + cliente.getNombre() + ", producto=" + producto.getNombre() + ", cantidad=" + cantidad + '}';
+        return "Transaccion{" + "codigo=" + getCodigo() + ", fecha=" + imprimirFecha() + ", monto=" + getMonto() + ", tipo=" + getTipo() + ", Cliente=" + cliente.getNombre() + ", producto=" + producto.getNombre() + ", cantidad=" + cantidad + '}';
     }
     
     
