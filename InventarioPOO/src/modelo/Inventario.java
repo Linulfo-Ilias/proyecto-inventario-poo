@@ -178,6 +178,9 @@ public class Inventario {
             for(Producto p : categoria.getProductos()){
                 if(p.getCodigo()==codigo){
                     Producto copia = p.clone();
+                    if (copia == null){
+                         return "Error: no se pudo clonar el producto.";                       
+                    }
                     copia.setCodigo(generarCodigoProducto());
                     if (copia != null) {
                         categoria.agregarProducto(copia);
@@ -201,20 +204,6 @@ public class Inventario {
         return total;
     }
     
-    public String venderProducto(int codigo, int cantidad){
-        Producto p = buscarProductoPorCodigo(codigo);
-        if (p == null){ 
-            return "Error: producto no encontrado.";
-        }
-        if (cantidad <= 0){
-            return "Error: cantidad inválida.";
-        }
-        if (p.getCantidad() < cantidad){
-            return "Error: stock insuficiente.\nActual: "+p.getCantidad();
-        }
-        p.restar(cantidad);
-        return "Venta realizada con éxito.";
-    }
     
     public String actualizarStockProducto(int codigo, int cantidad){
         Producto p = buscarProductoPorCodigo(codigo);
@@ -404,6 +393,13 @@ public class Inventario {
         if (cliente == null){
             return "Error: cliente no encontrado.";
         }
+        if (cantidad <= 0){
+            return "Error: cantidad no valida.";
+        }
+        if (producto.getCantidad() < cantidad){
+            return "Error: stock insuficiente.\nActual: "+producto.getCantidad();
+        }
+        producto.restar(cantidad);
 
         Deuda deuda = new Deuda(cliente,
                 producto, 
@@ -425,7 +421,14 @@ public class Inventario {
         if (cliente == null){
             return "Error: cliente no encontrado.";
         }
-
+        if (cantidad <= 0){
+            return "Error: cantidad no valida.";
+        }
+        
+        if (producto.getCantidad() < cantidad){
+            return "Error: stock insuficiente.\nActual: "+producto.getCantidad();
+        }
+        producto.restar(cantidad);
 
         Venta venta = new Venta(
                 producto,

@@ -40,9 +40,9 @@ public class Producto implements Cloneable{
     }
     
     public void restar(int cantidad){
-        this.cantidad -= cantidad;
+        this.cantidad = Math.max(0, this.cantidad - cantidad);
     }
-    
+
 
     /**
      * @return the codigo
