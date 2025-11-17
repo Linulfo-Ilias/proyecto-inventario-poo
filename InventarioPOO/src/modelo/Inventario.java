@@ -21,10 +21,10 @@ public class Inventario {
     private List<Cliente> clientes;
     private List<Proveedor> proveedores;
     private List<Transaccion> transacciones;
-    private int contadorCodigosCliente;
-    private int contadorCodigosTransaccion;
-    private int contadorCodigosProveedor;
-    private int contadorCodigosProducto;
+    private int contadorCodigosCliente = 1;
+    private int contadorCodigosTransaccion = 1;
+    private int contadorCodigosProveedor = 1;
+    private int contadorCodigosProducto = 1;
 
     public Inventario() {
         categorias=new ArrayList<>();
@@ -49,27 +49,43 @@ public class Inventario {
         return contadorCodigosProducto++;
     }
     
-    public void registrarProducto(String nombreCategoria, String nombre, int cantidad, float precio){
+    public String registrarProducto(String nombreCategoria, String nombre, int cantidad, float precio){
+        if (nombreCategoria == null || nombreCategoria.isBlank()) {
+            return "Error: el nombre de la categoría no puede estar vacío.";
+        }
+        if (nombre == null || nombre.isBlank()) {
+            return "Error: el nombre del producto no puede estar vacío.";
+        }
+        if (cantidad < 0) {
+            return "Error: la cantidad del producto no puede ser negativa.";
+        }
+        if (precio < 0) {
+            return "Error: el precio del producto no puede ser negativo.";
+        }
         for (Categoria categoria : categorias) {
             if(categoria.getNombre().equalsIgnoreCase(nombreCategoria)){
                 Producto producto = new Producto(generarCodigoProducto(), nombre, cantidad, precio);
-                categoria.getProductos().add(producto);
+                categoria.agregarProducto(producto);
+                return "Producto Agregado Correctamente.";
             }
         }
+        return "Error: no se encontro la categoria.";
     }
     
-    public void eliminarProducto(int codigo){
+    public String eliminarProducto(int codigo){
         for (Categoria categoria : categorias) {
             List<Producto> productos= categoria.getProductos();
             for (int i = productos.size()-1; i >= 0; i--) {
                 if(productos.get(i).getCodigo()==codigo){
                     productos.remove(i);
-                    return;
+                    return "Producto Eliminado Correctamente.";
                 }
             }
         }
+        return "Error: el producto no ha sido encontrado";
     }
     
+    //Importante: usar el null para imprimir un error desde fuera
     public Producto buscarProductoPorCodigo(int codigo) {
         for (Categoria categoria : categorias) {
              for (Producto p : categoria.getProductos()) {
@@ -81,6 +97,7 @@ public class Inventario {
         return null;
     }
     
+    //Importante: usar el null para imprimir un error desde fuera
     public List<Producto> buscarProductoPorNombre(String nombre){
         List<Producto> lista = new ArrayList<>();
         for (Categoria categoria : categorias) {
@@ -101,7 +118,7 @@ public class Inventario {
                 lista += "\t"+p.toString()+"\n";
             }
         }
-        return lista;
+        return "".equals(lista) ? "No Hay Productos Registrados." : lista;
     }
     
     public String listarProductosPorCategoria(String nombreCategoria){
@@ -128,7 +145,7 @@ public class Inventario {
                 }
             }
         }
-        return lista;
+        return "".equals(lista) ? "No hay productos con cantidad menor o igual a "+cantidad : lista;
     }
     
     public String mostrarMasCaroYMasBarato() {
@@ -156,18 +173,20 @@ public class Inventario {
         return lista;
     }
     
-    public void clonarProducto(int codigo) {
+    public String clonarProducto(int codigo) {
         for (Categoria categoria : categorias) {
             for(Producto p : categoria.getProductos()){
                 if(p.getCodigo()==codigo){
                     Producto copia = p.clone();
+                    copia.setCodigo(generarCodigoProducto());
                     if (copia != null) {
-                        categoria.getProductos().add(copia);
+                        categoria.agregarProducto(copia);
                     } 
-                    return;
+                    return "Producto copiado correctamente";
                 }
             }
         }
+        return "Producto no encontrado";
 
     }
     
@@ -182,51 +201,66 @@ public class Inventario {
         return total;
     }
     
-    public void venderProducto(int codigo, int cantidad){
-        for (Categoria categoria : categorias) {
-            for(Producto p : categoria.getProductos()){
-                if(p.getCodigo()==codigo){
-                    if(p.getCantidad()>=cantidad){
-                        p.restar(cantidad);
-                        return;
-                    }
-                }
-            }
+    public String venderProducto(int codigo, int cantidad){
+        Producto p = buscarProductoPorCodigo(codigo);
+        if (p == null){ 
+            return "Error: producto no encontrado.";
         }
+        if (cantidad <= 0){
+            return "Error: cantidad inválida.";
+        }
+        if (p.getCantidad() < cantidad){
+            return "Error: stock insuficiente.\nActual: "+p.getCantidad();
+        }
+        p.restar(cantidad);
+        return "Venta realizada con éxito.";
     }
     
-    public void comprarProducto(int codigo, int cantidad){
-        for (Categoria categoria : categorias) {
-            for(Producto p : categoria.getProductos()){
-                if(p.getCodigo()==codigo){
-                    p.sumar(cantidad);
-                    return;
-                }
-            }
+    public String actualizarStockProducto(int codigo, int cantidad){
+        Producto p = buscarProductoPorCodigo(codigo);
+        if (p == null){
+            return "Error: producto no encontrado.";
         }
+        if (cantidad < 0){
+            return "Error: cantidad invalida.";
+        }
+        p.setCantidad(cantidad);
+        return "Cantidad Actualizada Correctamente.";
     }  
     
  
-    public void registrarCategoria(String nombre){
+    public String registrarCategoria(String nombre){
+        if (nombre == null || nombre.isBlank() ){
+            return "Error: el nombre de la categoria no puede estar vacio.";
+        }
+        for (Categoria categoria : categorias) {
+            if (categoria.getNombre().equalsIgnoreCase(nombre)){
+                return "Error: la categoria ya existe.";
+            }
+        }
         Categoria categoria = new Categoria(nombre);
         categorias.add(categoria);
+        return "Categoria Añadida Exitosamente.";
+        
     }
     
-    public void editarNombreCategoria(String nombreAntes, String nombreDespues){
+    public String editarNombreCategoria(String nombreAntes, String nombreDespues){
         for (Categoria categoria : categorias) {
             if (categoria.getNombre().equalsIgnoreCase(nombreAntes)){
                 categoria.setNombre(nombreDespues);
-                return;
+                return "Nombre de la Categoria correctamente Actualizado.";
             }
         }
+        return "Error: no se encontro categoria";
     }
 
-    public void eliminarCategoriasSinUso() {
+    public String eliminarCategoriasSinUso() {
         for (int i = categorias.size() - 1; i >= 0; i--) {
             if (categorias.get(i).getProductos().isEmpty()) {
                 categorias.remove(i);
             }
         }
+        return "Categorias Sin Uso Eliminadas Exitosamente.";
     }
     
     public String listarCategorias(){
@@ -234,21 +268,31 @@ public class Inventario {
         for (Categoria categoria : categorias) {
             lista += categoria.toString()+"\n";
         }
-        return lista;
+        return "".equals(lista) ? "Error: no hay categorias registradas." : lista;
     }
     
-    public void registrarProveedor(String nombre){
+    public String registrarProveedor(String nombre){
+        if (nombre == null || nombre.isBlank()){
+            return "Error: el nombre del proveedor no puede estar vacio";
+        }
+        for (Proveedor proveedor : proveedores) {
+            if (proveedor.getNombre().equalsIgnoreCase(nombre)){
+                return "Error: el proveedor ya existe.";
+            }
+        }
         Proveedor proveedor = new Proveedor(generarCodigoProveedor(), nombre);
         proveedores.add(proveedor);
+        return "Proveedor Registrado Con Exito.";
     }
     
-    public void eliminarProveedor(int codigo){
+    public String eliminarProveedor(int codigo){
         for (int i = proveedores.size() - 1; i >= 0; i--) {
             if (proveedores.get(i).getCodigo() == codigo){
                 proveedores.remove(i);
-                return;
+                return "Proveedor Eliminado Exitosamente.";
             }
         }
+        return "Error: no se encontro el proveedor";
     }
     
     public String listarProveedores(){
@@ -256,23 +300,29 @@ public class Inventario {
         for (Proveedor proveedor : proveedores) {
             lista += proveedor.toString()+"\n";
         }
-        return lista;
+        return "".equals(lista) ? "Error: no hay proveedores registrados" : lista;
     }
 
-    public void registrarCliente(String nombre){
+    public String registrarCliente(String nombre){
+        if (nombre == null || nombre.isBlank()){
+            return "Error: el nombre del cliente no puede estar vacio.";
+        }
         Cliente cliente = new Cliente(generarCodigoCliente(), nombre);
         clientes.add(cliente);
+        return "Cliente Registrado Con Exito.";
     }
     
-    public void eliminarCliente(int codigo){
-        for (int i = clientes.size() - 1; i >= 0; i--) {
-            if (clientes.get(i).getCodigo() == codigo){
-                clientes.remove(i);
-                return;
-            }
+    public String eliminarCliente(int codigo){
+        Cliente cliente = buscarClientePorCodigo(codigo);
+        if (cliente == null){
+            return "Error: no se encontro";
         }
+        clientes.remove(cliente);
+        return "Cliente Eliminado Correctamente";
     }
     
+    
+    //Importante: la lista se imprime desde fuera y el error tambien
     public List<Cliente> buscarClientePorNombre(String nombre){
         List<Cliente> lista = new ArrayList<>();
         for (Cliente cliente : clientes) {
@@ -297,7 +347,7 @@ public class Inventario {
         for (Cliente cliente : clientes) {
             lista+=cliente.toString()+"\n";
         }
-        return lista;
+        return "".equals(lista) ? "Error: no hay clientes registrados" : lista;
     }
     
     public String listarClientesConDeudas(){
@@ -316,10 +366,14 @@ public class Inventario {
         for (Cliente cliente : listaList) {
             listaString += cliente.toString()+"\n";
         }
-        return listaString;
+        return "".equals(listaString) ? "Error: no hay clientes con deudas" : listaString;
     }
     
     public String listarTransaccionesCliente(int codigo){
+        Cliente cliente = buscarClientePorCodigo(codigo);
+        if (cliente == null){
+            return "Error: no existe el cliente";
+        }
         String lista = "";
         for (Transaccion transaccion : transacciones) {
             if (transaccion.getTipo().equalsIgnoreCase("deuda")){
@@ -334,71 +388,58 @@ public class Inventario {
                 }
             }
         }
-        return lista;
+        return "".equals(lista) ? "Error: el cliente no tiene transacciones registradas" : lista;
     }
     
     public void registrarTransaccion(Transaccion transaccion){
         transacciones.add(transaccion);
     }
     
-    public void registrarDeuda(int codigoCliente, int codigoProducto, int cantidad){
-        Cliente clienteARegistrar = null;
-        Producto productoARegistrar = null;
-        for (Cliente cliente : clientes) {
-            if (cliente.getCodigo() == codigoCliente){
-                clienteARegistrar = cliente;
-                break;
-            }
+    public String registrarDeuda(int codigoCliente, int codigoProducto, int cantidad){
+        Cliente cliente = buscarClientePorCodigo(codigoCliente);
+        Producto producto = buscarProductoPorCodigo(codigoProducto);
+        if (producto == null){
+            return "Error: producto no encontrado.";
         }
-        for (Categoria categoria : categorias) {
-            for (Producto producto : categoria.getProductos()){
-                if (producto.getCodigo() == codigoProducto){
-                    productoARegistrar = producto;
-                    break;
-                }
-            }
-            if (productoARegistrar != null) break;
+        if (cliente == null){
+            return "Error: cliente no encontrado.";
         }
-        Deuda deuda = new Deuda(clienteARegistrar,
-                productoARegistrar, 
+
+        Deuda deuda = new Deuda(cliente,
+                producto, 
                 cantidad, 
                 (generarCodigoTransaccion()), 
                 LocalDate.now(), 
-                (cantidad*productoARegistrar.getPrecio()));
+                (cantidad*producto.getPrecio()));
         
         transacciones.add(deuda);
+        return "Deuda Registrada Correctamente.";
     }
     
-    public void registrarVenta(int codigoCliente, int codigoProducto, int cantidad){
-        Cliente clienteARegistrar = null;
-        Producto productoARegistrar = null;
-        for (Cliente cliente : clientes) {
-            if (cliente.getCodigo() == codigoCliente){
-                clienteARegistrar = cliente;
-                break;
-            }
+    public String registrarVenta(int codigoCliente, int codigoProducto, int cantidad){
+        Cliente cliente = buscarClientePorCodigo(codigoCliente);
+        Producto producto = buscarProductoPorCodigo(codigoProducto);
+        if (producto == null){
+            return "Error: producto no encontrado.";
         }
-        for (Categoria categoria : categorias) {
-            for (Producto producto : categoria.getProductos()){
-                if (producto.getCodigo() == codigoProducto){
-                    productoARegistrar = producto;
-                    break;
-                }
-            }
-            if (productoARegistrar != null) break;
+        if (cliente == null){
+            return "Error: cliente no encontrado.";
         }
+
+
         Venta venta = new Venta(
-                productoARegistrar,
-                clienteARegistrar, 
+                producto,
+                cliente, 
                 cantidad, 
                 (generarCodigoTransaccion()), 
                 LocalDate.now(), 
-                (cantidad*productoARegistrar.getPrecio()));
+                (cantidad*producto.getPrecio()));
         
         transacciones.add(venta);
+        return "Venta Registrada Correctamente.";
     }
     
-    public void registrarPago(int codigoProveedor, float monto){
+    public String registrarPago(int codigoProveedor, float monto){
         Proveedor proveedorARegistrar = null;
         for (Proveedor proveedor : proveedores) {
             if (proveedor.getCodigo() == codigoProveedor){
@@ -406,14 +447,19 @@ public class Inventario {
                 break;
             }  
         }
+        if (proveedorARegistrar == null){
+            return "Error: no se encontro el proveedor";
+        }
         Pago pago = new Pago(proveedorARegistrar,
                 (generarCodigoTransaccion()),
                 LocalDate.now(), 
                 monto);
         
         transacciones.add(pago);
+        return "Pago Registrado Correctamente.";
     }
     
+    //Importante: la lista se imprime desde fuera y el error tambien
     public List<Transaccion> buscarTransaccionesPorFecha(int dia, int mes, int anio) {
         List<Transaccion> resultado = new ArrayList<>();
         LocalDate fechaBuscada = LocalDate.of(anio, mes, dia);
@@ -427,6 +473,7 @@ public class Inventario {
         return resultado;
     }
     
+    //Importante: la lista se imprime desde fuera y el error tambien
     public List<Transaccion> buscarTransaccionesPorTipo(String tipo){
         List<Transaccion> resultado = new ArrayList<>();
         for (Transaccion transaccion : transacciones) {
@@ -437,12 +484,21 @@ public class Inventario {
         return resultado;
     }
     
+    public Transaccion buscarTransaccionPorCodigo(int codigo){
+        for (Transaccion transaccion : transacciones) {
+            if (transaccion.getCodigo() == codigo){
+                return transaccion;
+            }
+        }
+        return null;
+    }
+    
     public String listarTransacciones(){
         String lista = "";
         for (Transaccion transaccion : transacciones) {
             lista += transaccion.toString()+"\n";
         }
-        return lista;
+        return "".equals(lista) ? "Error: no hay transacciones registradas" : lista;
     }
 
     public float calcularIngresos(){
@@ -465,14 +521,17 @@ public class Inventario {
         return egresos;
     }
     
-    public void marcarDeudaComoPagada(int codigo){
-        for (Transaccion transaccion : transacciones) {
-            if(transaccion.getCodigo() == codigo){
-                if(transaccion instanceof Deuda deuda){
-                    deuda.marcarComoPagado();
-                }
-                
-            }
+    public String marcarDeudaComoPagada(int codigo){
+        Transaccion transaccion = buscarTransaccionPorCodigo(codigo);
+        if (transaccion == null){
+            return "Error: la transaccion no se ha encontrado";
+        }
+        if (transaccion.getTipo().equalsIgnoreCase("deuda")){
+            Deuda deuda = (Deuda) transaccion;
+            deuda.marcarComoPagado();
+            return "Deuda marcada como pagada.";
+        } else {
+            return "Error: esta transaccion no es una deuda.";
         }
     }
     

@@ -6,6 +6,7 @@ package modelo;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  *
@@ -23,10 +24,11 @@ public abstract class Transaccion {
         this.monto = monto;
     }
 
-    public String imprimirFecha(){
-        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-        return formato.format(this.getFecha());
+    public String imprimirFecha() {
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return this.getFecha().format(formato);
     }
+
             
             
     @Override
