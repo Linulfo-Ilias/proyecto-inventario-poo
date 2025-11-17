@@ -4,6 +4,7 @@
  */
 package modelo;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -22,9 +23,15 @@ public abstract class Transaccion {
         this.monto = monto;
     }
 
+    public String imprimirFecha(Date fecha){
+        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+        return formato.format(fecha);
+    }
+            
+            
     @Override
     public String toString() {
-        return "Transaccion{" + "codigo=" + codigo + ", fecha=" + fecha + ", monto=" + monto + ", tipo=" + tipo + '}';
+        return "Transaccion{" + "codigo=" + codigo + ", fecha=" + imprimirFecha(fecha) + ", monto=" + monto + ", tipo=" + tipo + '}';
     }
 
     /**
