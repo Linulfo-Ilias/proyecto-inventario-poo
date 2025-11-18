@@ -1,0 +1,9 @@
+=== REPORTE DE VENTAS ===
+
+Ventas del dia: 0
+Ventas del mes: 0
+Productos mas vendidos: 
+
+Cantidad de transacciones: 0
+Ingresos totales: 0.0
+

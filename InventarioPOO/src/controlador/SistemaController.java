@@ -24,7 +24,12 @@ public class SistemaController {
             gestor = new GestorPersistencia();
             reporte = new Reporte();
             manager = new BackupManager();
-            new VentanaLogin(this).setVisible(true);
+            
+            if (inventario == null) {
+                inventario = new Inventario(); 
+            }
+            
+            // new VentanaLogin(this).setVisible(true);
         } catch (Exception e) {
             new DialogoError(null, true, "ERROR: no se pudo ejecutar el programa.").setVisible(true);
         }

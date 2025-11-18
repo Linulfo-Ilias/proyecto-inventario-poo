@@ -152,7 +152,7 @@ public class VentanaLogin extends javax.swing.JFrame {
         if (cliente == null){
             new DialogoError(this,true,"Credenciales incorrectas").setVisible(true);
         }else{
-            new FormularioCliente(controller).setVisible(true);
+            new FormularioCliente(controller, cliente).setVisible(true);
             dispose();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
