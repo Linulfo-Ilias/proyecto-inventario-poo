@@ -116,11 +116,20 @@ public class DialogoRegistrarCliente extends javax.swing.JDialog {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         String nombre = jTextField1.getText();
-        String contraseña = jTextField2.getText();
+
+        // Convertimos el texto a char[] para pasarlo al controlador
+        char[] contraseña = jTextField2.getText().toCharArray();
 
         boolean control = controller.registrarUsuario(nombre, contraseña);
-        if (control){dispose();}else{new DialogoError(null, true, "Credenciales incorrectas").setVisible(true);}
-        
+
+        // Limpiamos el arreglo de contraseña por seguridad
+        java.util.Arrays.fill(contraseña, '0');
+
+        if (control) {
+            dispose();
+        } else {
+            new DialogoError(null, true, "Credenciales incorrectas").setVisible(true);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed

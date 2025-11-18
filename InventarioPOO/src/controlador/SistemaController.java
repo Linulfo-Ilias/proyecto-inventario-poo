@@ -41,30 +41,48 @@ public class SistemaController {
     }
 
     // ================= Login =================
-    public boolean verificarCredenciales(String usuario, String contraseña) {
-        if (usuario.isEmpty() || contraseña.isEmpty()) return false;
-        return true;
+    public boolean verificarCredenciales(String usuario, char[] passwordChars) {
+        if (usuario.isEmpty() || passwordChars.length == 0) return false;
+
+        String contraseñaIngresada = new String(passwordChars);
+        java.util.Arrays.fill(passwordChars, '0');
+
+        return !contraseñaIngresada.isEmpty(); // o cualquier lógica de validación adicional
     }
 
-    public Cliente Logear(String usuario, String contraseña) {
-        if (!verificarCredenciales(usuario, contraseña)) return null;
+    public Cliente Logear(String usuario, char[] passwordChars) {
+        if (usuario.isEmpty() || passwordChars.length == 0) return null;
+
+        String contraseñaIngresada = new String(passwordChars);
+
+        // Limpiamos el array
+        java.util.Arrays.fill(passwordChars, '0');
 
         for (Cliente cliente : inventario.getClientes()) {
-            if (usuario.equals(cliente.getNombre()) && contraseña.equals(cliente.getContraseña())) {
+            if (usuario.equals(cliente.getNombre()) && contraseñaIngresada.equals(cliente.getContraseña())) {
                 return cliente;
             }
         }
         return null;
     }
 
-    public boolean iniciarAdmin(String usuario, String contraseña) {
-        if (usuario.equals("XxFrijolesxX_YT") && contraseña.equals("18112025Red")) {
-            new PanelDeControl(this).setVisible(true);
+    public boolean compararAdmin(String usuario, char[] passwordChars) {
+        if ("XxFrijolesxX_YT".equals(usuario) && compararContraseña(passwordChars)) {
             return true;
         }
         return false;
-    }
+     }
 
+    private boolean compararContraseña(char[] passwordChars){
+        char[] contraseñaCorrecta = {'1','8','1','1','2','0','2','5','R','e','d'};
+        boolean resultado = java.util.Arrays.equals(passwordChars, contraseñaCorrecta);
+
+        // Limpiamos el array para seguridad
+        java.util.Arrays.fill(passwordChars, '0');
+
+        return resultado;
+    }
+    
     // ================= Getters =================
     public List<Producto> getProductos() {
         return inventario.getProductos();
@@ -221,8 +239,14 @@ public class SistemaController {
     }
 
     // ================= Registrar Usuario =================
-    public boolean registrarUsuario(String nombre, String contraseña) {
+    public boolean registrarUsuario(String nombre, char[] passwordChars) {
         try {
+            // Convertimos char[] a String correctamente
+            String contraseña = new String(passwordChars);
+
+            // Limpiamos el array para seguridad
+            java.util.Arrays.fill(passwordChars, '0');
+
             inventario.registrarCliente(nombre, contraseña);
             return true;
         } catch (Exception e) {
