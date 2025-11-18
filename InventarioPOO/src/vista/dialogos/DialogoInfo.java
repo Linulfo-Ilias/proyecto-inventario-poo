@@ -15,9 +15,10 @@ public class DialogoInfo extends javax.swing.JDialog {
     /**
      * Creates new form DialogoInfo
      */
-    public DialogoInfo(java.awt.Frame parent, boolean modal) {
+    public DialogoInfo(java.awt.Frame parent, boolean modal, String mensaje) {
         super(parent, modal);
         initComponents();
+        jLabel1.setText(mensaje);
     }
 
     /**
@@ -73,6 +74,7 @@ public class DialogoInfo extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -100,7 +102,7 @@ public class DialogoInfo extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                DialogoInfo dialog = new DialogoInfo(new javax.swing.JFrame(), true);
+                DialogoInfo dialog = new DialogoInfo(new javax.swing.JFrame(), true, "algo ha pasado exitosamente!");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

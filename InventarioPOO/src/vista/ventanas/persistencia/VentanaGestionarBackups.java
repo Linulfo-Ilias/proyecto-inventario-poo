@@ -2,80 +2,61 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package vista.administracion;
+package vista.ventanas.persistencia;
 
 import controlador.SistemaController;
-import java.util.List;
 import javax.swing.table.DefaultTableModel;
-import modelo.Producto;
+import vista.dialogos.DialogoInfo;
 import vista.ventanas.principales.PanelDeControl;
-import vista.ventanas.productos.DialogoEditarProducto;
-import vista.ventanas.productos.FormularioProducto;
 
 /**
  *
  * @author Angie
  */
-public class VentanaGestionProductos extends javax.swing.JFrame {
+public class VentanaGestionarBackups extends javax.swing.JFrame {
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaGestionProductos.class.getName());
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaGestionarBackups.class.getName());
     
     private SistemaController controller;
-
     /**
-     * Creates new form VentanaGestionProductos
+     * Creates new form VentanaGestionarBackups
      */
-    public VentanaGestionProductos(SistemaController controller) {
+    public VentanaGestionarBackups(SistemaController controller) {
         this.controller = controller;
         initComponents();
-        LlenarTabla();
+        llenarTabla();
         configurarEventos();
     }
-    
-    private void LlenarTabla(){
+
+    private void llenarTabla() {
         DefaultTableModel modelo = new DefaultTableModel();
-        
         modelo.addColumn("Nombre");
-        modelo.addColumn("Cantidad");
-        modelo.addColumn("Precio Unitario");
-        modelo.addColumn("Descripción");
-        
-        for(Producto p : controller.getProductos()){
-            modelo.addRow(new Object[]{
-                p.getNombre(),
-                p.getCantidad(),
-                p.getPrecio(),
-                p.getCantidad() + "x " + p.getNombre() + ": " + p.getPrecio() + "$"
-            });
-        }
-        
+        modelo.addColumn("Fecha");
+        modelo.addColumn("Tamaño (bytes)");
+
+        controller.listarBackups().forEach(b -> 
+            modelo.addRow(new Object[]{b.getNombre(), b.getFecha(), b.getTamaño()})
+        );
+
         jTable1.setModel(modelo);
     }
     
     private void configurarEventos() {
         jTable1.getSelectionModel().addListSelectionListener(e -> {
             boolean seleccionado = jTable1.getSelectedRow() != -1;
-            jButton3.setEnabled(seleccionado);
             jButton2.setEnabled(seleccionado);
+            jButton3.setEnabled(seleccionado);
         });
-        
-        jButton3.setEnabled(false);
+
         jButton2.setEnabled(false);
+        jButton3.setEnabled(false);
     }
     
-    private Producto getProductoSeleccionado(){
+    private String getBackupSeleccionado() {
         int fila = jTable1.getSelectedRow();
-        if(fila == -1) return null;
-
-        String nombre = (String) jTable1.getValueAt(fila, 0);
-        
-         return controller.getProductos().stream()
-                .filter(p -> p.getNombre().equals(nombre))
-                .findFirst()
-                .orElse(null);
+        if (fila == -1) return null;
+        return (String) jTable1.getValueAt(fila, 0);
     }
-
-    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -92,25 +73,24 @@ public class VentanaGestionProductos extends javax.swing.JFrame {
         jTable1 = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("agregar producto");
+        jButton1.setText("crear");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
-        jButton2.setText("eliminar producto");
+        jButton2.setText("eliminar");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
 
-        jButton3.setText("editar producto");
+        jButton3.setText("restaurar");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
@@ -148,19 +128,12 @@ public class VentanaGestionProductos extends javax.swing.JFrame {
         jScrollPane2.setViewportView(jTable1);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("PRODUCTOS");
+        jLabel1.setText("COPIAS DE SEGURIDAD (backups)");
 
-        jButton4.setText("guardar");
+        jButton4.setText("volver");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
-            }
-        });
-
-        jButton5.setText("volver");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
             }
         });
 
@@ -171,23 +144,21 @@ public class VentanaGestionProductos extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(27, 27, 27)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton5)
+                    .addComponent(jButton4)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 617, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 617, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(14, Short.MAX_VALUE))
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(22, 22, 22)
+                .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -195,57 +166,51 @@ public class VentanaGestionProductos extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton3)
                     .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton4))
+                    .addComponent(jButton2))
                 .addGap(18, 18, 18)
-                .addComponent(jButton5)
-                .addContainerGap(7, Short.MAX_VALUE))
+                .addComponent(jButton4)
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        controller.guardarCambios();
-    }//GEN-LAST:event_jButton4ActionPerformed
+        String nombre = getBackupSeleccionado();
+        if (nombre != null) {
+            controller.eliminarBackup(nombre);
+            llenarTabla();
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        Producto p = getProductoSeleccionado();
-        if (p == null) return;
-
-        new DialogoEditarProducto(this, true,controller, p).setVisible(true);
-        LlenarTabla();
+        String nombre = getBackupSeleccionado();
+        if (nombre != null) {
+            controller.restaurarBackup(nombre);
+            llenarTabla();
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-        Producto p = getProductoSeleccionado();
-        if (p == null) return;
-
-        controller.eliminarProducto(p.getCodigo());
-        LlenarTabla();
-    }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
-        new PanelDeControl(controller).setVisible(true);
-        dispose();
-    }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        new FormularioProducto(controller).setVisible(true);
+        controller.crearBackup();
+        new DialogoInfo(this, true, "Copia de seguridad creada").setVisible(true);
+        llenarTabla();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        new PanelDeControl(controller).setVisible(true);
+        dispose();
+    }//GEN-LAST:event_jButton4ActionPerformed
+   
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;

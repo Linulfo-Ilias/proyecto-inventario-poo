@@ -11,10 +11,12 @@ package modelo;
 public class Cliente {
     private int codigo;
     private String nombre;
+    private String contraseña;
 
-    public Cliente(int codigo, String nombre) {
+    public Cliente(int codigo, String nombre, String contraseña) {
         this.codigo = codigo;
         this.nombre = nombre;
+        this.contraseña = contraseña;
     }
 
     @Override
@@ -22,8 +24,10 @@ public class Cliente {
         return "Cliente{" + "codigo=" + codigo + ", nombre=" + nombre + '}';
     }
     
+    public String getContraseña(){
+        return contraseña;
+    }
     
-
     /**
      * @return the codigo
      */

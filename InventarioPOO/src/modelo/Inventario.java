@@ -292,13 +292,13 @@ public class Inventario {
         return "".equals(lista) ? "Error: no hay proveedores registrados" : lista;
     }
 
-    public String registrarCliente(String nombre){
+    public boolean registrarCliente(String nombre, String contraseña){
         if (nombre == null || nombre.isBlank()){
-            return "Error: el nombre del cliente no puede estar vacio.";
+            return false;
         }
-        Cliente cliente = new Cliente(generarCodigoCliente(), nombre);
+        Cliente cliente = new Cliente(generarCodigoCliente(), nombre, contraseña);
         clientes.add(cliente);
-        return "Cliente Registrado Con Exito.";
+        return true;
     }
     
     public String eliminarCliente(int codigo){
@@ -538,6 +538,24 @@ public class Inventario {
         }
     }
     
+    
+    public List<Producto> getProductos(){ // devuelve TODOS los productos
+        List<Producto> productosTotales = new ArrayList<>();
+        for (Categoria categoria : categorias) {
+            List<Producto> productos = categoria.getProductos();
+            for (Producto producto : productos) {
+                productosTotales.add(producto);
+            }
+        }
+        return productosTotales;
+    }
+    
+    public Categoria getCategoriaPorNombre(String nombre){
+        for (Categoria categoria : categorias) {
+            if (categoria.getNombre().equals(nombre)){return categoria;}
+        }
+        return null;
+    }
     
     /**
      * @return the categorias
