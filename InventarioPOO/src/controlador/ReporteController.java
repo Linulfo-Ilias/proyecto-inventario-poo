@@ -8,6 +8,6 @@ package controlador;
  *
  * @author Angie
  */
-public class TransaccionController {
+public class ReporteController {
     
 }
