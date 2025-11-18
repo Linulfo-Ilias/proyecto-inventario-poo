@@ -5,6 +5,7 @@
 package vista.ventanas.clientes;
 
 import controlador.SistemaController;
+import vista.dialogos.DialogoError;
 
 /**
  *
@@ -117,9 +118,9 @@ public class DialogoRegistrarCliente extends javax.swing.JDialog {
         String nombre = jTextField1.getText();
         String contraseña = jTextField2.getText();
 
-        controller.agregarCliente(nombre, contraseña);
-
-        dispose(); // cerrar al terminar
+        boolean control = controller.registrarUsuario(nombre, contraseña);
+        if (control){dispose();}else{new DialogoError(null, true, "Credenciales incorrectas").setVisible(true);}
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed

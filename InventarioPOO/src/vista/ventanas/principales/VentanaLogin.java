@@ -178,6 +178,8 @@ public class VentanaLogin extends javax.swing.JFrame {
         if (estado){
             new VentanaGestionProductos(controller).setVisible(true);
             dispose();
+        }else{
+            new DialogoError(null, true, "acceso denegado.").setVisible(true);
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 

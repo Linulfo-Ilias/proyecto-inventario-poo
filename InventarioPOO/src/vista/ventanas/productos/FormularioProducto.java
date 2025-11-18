@@ -147,11 +147,11 @@ public class FormularioProducto extends javax.swing.JFrame {
         int cantidad = (int) jFormattedTextField3.getValue();
         int precio = (int) jFormattedTextField2.getValue();
         
-        String resultado = controller.agregarProducto(nombreCategoria, nombre, cantidad, precio);
-        if ("Producto Agregado Correctamente.".equals(resultado)){
+        Boolean resultado = controller.agregarProducto(nombreCategoria, nombre, cantidad, precio);
+        if (resultado){
             dispose();
         }else{
-            new DialogoError(this, true, resultado).setVisible(true);
+            new DialogoError(this, true, "Datos erroneos").setVisible(true);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 

@@ -8,6 +8,7 @@ import controlador.SistemaController;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import modelo.Venta;
+import vista.dialogos.DialogoError;
 import vista.dialogos.DialogoInfo;
 import vista.ventanas.principales.PanelDeControl;
 
@@ -154,8 +155,12 @@ public class VentanaGestionVentas extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        new DialogoInfo(this, true, "Reporte generado en persistencia/reporte_ventas.txt").setVisible(true);
-        controller.generarReporteVentas();
+        boolean control = controller.generarReporteVentas();
+        if(control){
+            new DialogoInfo(this, true, "Reporte generado en persistencia/reporte_ventas.txt").setVisible(true);
+        }else{
+            new DialogoError(this, true, "No se pudo generar el reporte").setVisible(true);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed

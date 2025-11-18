@@ -8,6 +8,7 @@ import controlador.SistemaController;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import modelo.Producto;
+import vista.dialogos.DialogoError;
 import vista.ventanas.principales.PanelDeControl;
 import vista.ventanas.productos.DialogoEditarProducto;
 import vista.ventanas.productos.FormularioProducto;
@@ -207,7 +208,8 @@ public class VentanaGestionProductos extends javax.swing.JFrame {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        controller.guardarCambios();
+        boolean control = controller.guardarCambios();
+        if (!control){new DialogoError(this, true, "no se pudieron guardar los cambios").setVisible(true);}
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -224,7 +226,8 @@ public class VentanaGestionProductos extends javax.swing.JFrame {
         Producto p = getProductoSeleccionado();
         if (p == null) return;
 
-        controller.eliminarProducto(p.getCodigo());
+        boolean control = controller.eliminarProducto(p.getCodigo());
+        if (!control){new DialogoError(this, true, "no se pudo eliminar").setVisible(true);}
         LlenarTabla();
     }//GEN-LAST:event_jButton2ActionPerformed
 

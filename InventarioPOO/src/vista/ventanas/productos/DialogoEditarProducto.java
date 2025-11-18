@@ -6,6 +6,7 @@ package vista.ventanas.productos;
 
 import controlador.SistemaController;
 import modelo.Producto;
+import vista.dialogos.DialogoError;
 
 /**
  *
@@ -153,9 +154,8 @@ public class DialogoEditarProducto extends javax.swing.JDialog {
         int cantidad = Integer.parseInt(jTextField2.getText());
         float precio = Float.parseFloat(jTextField3.getText());
 
-        controller.editarProducto(producto, nuevoNombre, precio, cantidad);
-
-        dispose();
+        boolean control = controller.editarProducto(producto, nuevoNombre, precio, cantidad);
+        if (control){dispose();}else{new DialogoError(null, true, "Credenciales incorrectas").setVisible(true);}
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed

@@ -6,6 +6,7 @@ package vista.ventanas.persistencia;
 
 import controlador.SistemaController;
 import javax.swing.table.DefaultTableModel;
+import vista.dialogos.DialogoError;
 import vista.dialogos.DialogoInfo;
 import vista.ventanas.principales.PanelDeControl;
 
@@ -153,7 +154,7 @@ public class VentanaGestionarBackups extends javax.swing.JFrame {
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(27, 27, 27))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -179,8 +180,8 @@ public class VentanaGestionarBackups extends javax.swing.JFrame {
         // TODO add your handling code here:
         String nombre = getBackupSeleccionado();
         if (nombre != null) {
-            controller.eliminarBackup(nombre);
-            llenarTabla();
+            boolean control = controller.eliminarBackup(nombre);
+            if(control){llenarTabla();}else{new DialogoError(this, true, "No se pudo eliminar").setVisible(true);}
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -188,16 +189,18 @@ public class VentanaGestionarBackups extends javax.swing.JFrame {
         // TODO add your handling code here:
         String nombre = getBackupSeleccionado();
         if (nombre != null) {
-            controller.restaurarBackup(nombre);
-            llenarTabla();
+            boolean control = controller.restaurarBackup(nombre);
+            if (control){llenarTabla();}else{new DialogoError(this, true, "No se pudo restaurar").setVisible(true);}
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        controller.crearBackup();
+        boolean control = controller.crearBackup();
+        if (control){
         new DialogoInfo(this, true, "Copia de seguridad creada").setVisible(true);
-        llenarTabla();
+        llenarTabla();}else{
+            new DialogoError(this, true, "No se pudo crear un backup").setVisible(true);}
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
